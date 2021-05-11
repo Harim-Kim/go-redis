@@ -1,0 +1,176 @@
+/*
+howto ? Windows
+(1) Go Stub generation
+protoc  -I. -I%GOPATH%/src -I%GOPATH%/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis  --go_out=plugins=grpc:. vehiclemodel.proto
+(2) Reverse proxy generation
+protoc  -I. -I%GOPATH%/src -I%GOPATH%/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis  --grpc-gateway_out=logtostderr=true:.  vehiclemodel.proto
+(3) Swagger file genneration
+protoc  -I. -I%GOPATH%/src -I%GOPATH%/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis --swagger_out=logtostderr=true:. vehiclemodel.proto
+ 
+howto ? Linux
+(1) Go Stub generation
+protoc  -I. -I$GOPATH/src -I$GOPATH/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis  --go_out=plugins=grpc:. vehiclemodel.proto
+(2) Reverse proxy generation
+protoc  -I. -I$GOPATH/src -I$GOPATH/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis  --grpc-gateway_out=logtostderr=true:.  vehiclemodel.proto
+(3) Swagger file genneration
+protoc  -I. -I$GOPATH/src -I$GOPATH/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis --swagger_out=logtostderr=true:. vehiclemodel.proto
+*/
+syntax = "proto3";
+option go_package = "localhost:8080/thisisanexample";
+package core;
+
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/empty.proto";
+
+service VehiclemodelService {
+    rpc RegisterVehicleModel (RegisterVehicleModelRequest) returns (VehicleModelID);
+    rpc RegisterImage (VehiclemodelImage) returns (google.protobuf.Empty);
+    rpc GetImage (VehicleModelID) returns (VehiclemodelImage);
+
+    rpc GetVehicleModel (VehicleModelID) returns (GetVehicleModelResponse);
+    
+    rpc GetVehicleSimpleModel (VehicleModelID) returns (GetVehicleSimpleModelResponse);
+
+    rpc ListVehicleModel (ListVehicleModelRequest) returns (VehicleModelList);
+    rpc UpdateVehicleModel (UpdateVehicleModelRequest) returns (GetVehicleModelResponse);
+
+    rpc DeleteVehicleModel (VehicleModelID) returns (google.protobuf.Empty);
+
+    rpc CountVehicleModel (google.protobuf.Empty) returns (CountResponse);
+}
+
+message PageInfo {
+    uint64 totalRecord = 1;
+    uint64 totalPage = 2;
+    uint64 offset = 3;
+    uint64 limit = 4;
+    uint64 page = 5;
+    uint64 prevPage = 6;
+    uint64 nextPage = 7;
+}
+
+message GetVehicleModelResponse {
+    string ID = 1;
+
+    string name = 2;
+    string brand = 7;
+
+    bool standard = 12;
+    string standardModelID = 13;
+
+    uint32 seatingCapacity = 3;
+    string fuelType = 4;
+    float fuelEfficiency = 14;
+    uint32 fuelTankCapacity = 6;
+    uint32 displacement = 5;
+    VehicleModelGrade grade = 11;
+    uint32 warmUpTime = 15;
+
+    string imageURL = 8;
+
+    int64 createdAt = 9;
+    int64 updatedAt = 10;
+}
+
+
+message GetVehicleSimpleModelResponse {
+    string ID = 1;
+    string name = 2;
+    string brand = 3;
+    string fuelType = 4;
+   
+}
+message RegisterVehicleModelRequest {
+    bool standard = 11;
+    string standardModelID = 12;
+
+    string name = 1;
+    string brand = 6;
+
+    uint32 seatingCapacity = 2;
+    string fuelType = 3;
+    float fuelEfficiency = 8;
+    uint32 fuelTankCapacity = 5;
+    uint32 displacement = 4;
+    VehicleModelGrade grade = 9;
+
+    uint32 warnUpTime = 10;
+
+    string imageURL = 7;
+}
+
+message UpdateVehicleModelRequest {
+    google.protobuf.FieldMask update_mask = 1;
+    string ID = 2;
+
+    bool standard = 10;
+    string standardModelID = 11;
+
+    string name = 3;
+    string brand = 8;
+
+    uint32 seatingCapacity = 4;
+    string fuelType = 5;
+    float fuelEfficiency = 12;
+    uint32 fuelTankCapacity = 7;
+    uint32 displacement = 6;
+    VehicleModelGrade grade = 13;
+
+    uint32 warmUpTime = 14;
+
+    string imageURL = 9;
+}
+
+message VehicleModelID {
+    string ID = 1;
+}
+// Vehicle Model List
+message VehicleModelList {
+    repeated    GetVehicleModelResponse VehicleModels = 1;
+                PageInfo pageInfo = 2;
+}
+
+message CountResponse {
+    uint64 listCount = 1;
+}
+
+enum VehicleModelGrade {
+    X_UNKNOWN = 0;
+
+    CITY_CAR = 10;
+    SUB_COMPACT = 20;
+    COMPACT = 30;
+    MID_SIZE = 40;
+    LARGE_SIZE = 50;
+    SUV = 60;
+    VAN = 70;
+    ELECTRIC = 80;
+    OVERSEA = 90;
+}
+
+message VehiclemodelImage {
+    string ID = 1;
+    bytes ImageBytes = 2;
+}
+
+message VehicleModelFilter {
+    repeated    string IDs = 1;         // 모델 ID[]
+                string brand = 2;       // 제조사
+    repeated    string brands = 3;      // 제조사[]
+                string name = 4;        // 모델명
+                string fuelType = 5;    // 연료 유형
+    repeated    string fuelTypes = 6;   // 연료 유형[]
+                string grade = 7;       // 차량 등급
+    repeated    string grades = 8;      // 차량 등급[]
+                uint64 page = 9;
+                uint64 rowPerPage = 10;
+                uint64 sortField = 11;
+                uint64 sortOrder = 12;
+    repeated    uint64 sortFields = 13;
+    repeated    uint64 SortOrders = 14;
+}
+
+message ListVehicleModelRequest {
+    // 필터
+    VehicleModelFilter filter = 1;
+}
