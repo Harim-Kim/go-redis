@@ -14,3 +14,10 @@ func (h BaseHandler) UpdateLog(code int, err error) {
 	return
 }
 
+func (h BaseHandler) ReadLog () {
+	return
+}
+
+func (h BaseHandler) DeleteLog () {
+	return
+}

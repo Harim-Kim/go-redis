@@ -4,24 +4,19 @@ import (
 	pb "OJT/core"
 	"OJT/model"
 	"context"
+	"encoding/json"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/jinzhu/gorm"
 	"google.golang.org/grpc"
 	"log"
 	"net/http"
 	"strconv"
 	"strings"
 	"time"
-
 )
 
 type VehicleModelHandler BaseHandler
 
-func LandingHandler(w http.ResponseWriter, r *http.Request){
-	w.Write([]byte("Hello world"))
-	return
-}
 func stringInputConvertToUnintArray(s []string, N int )  []uint64{
 	ret := make([]uint64,N)
 	for i, v := range s{
@@ -29,7 +24,7 @@ func stringInputConvertToUnintArray(s []string, N int )  []uint64{
 	}
 	return ret
 }
-func VehiclesHandler(w http.ResponseWriter, r *http.Request ) {
+func (h *VehicleModelHandler) VehiclesHandler(w http.ResponseWriter, r *http.Request ) {
 	fmt.Println("Working,,")
 	conn, err := grpc.Dial("localhost:12005", grpc.WithInsecure(),grpc.WithBlock())
 	if err != nil {
@@ -42,23 +37,26 @@ func VehiclesHandler(w http.ResponseWriter, r *http.Request ) {
 	ctx, cancel := context.WithTimeout(context.Background(),time.Second)
 	defer cancel()
 
-	//log처리를 위한 DB Connect
-	db, err := gorm.Open("mysql","root:root@tcp(127.0.0.1:3306)/vehicle_model?charset=utf8&parseTime=True&loc=Local")
-	if err != nil{
-		panic("failed to open database")
-	}
 
 	query := r.URL.Query()
+	jsonbody, err := json.Marshal(query)
+	filter := pb.VehicleModelFilter{}
+	if err := json.Unmarshal(jsonbody, &filter); err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(filter)
+	fmt.Println(query)
 	//전체
 	if len(query) == 0{
 		response, err := c.ListVehicleModel(ctx, &pb.ListVehicleModelRequest{Filter: &pb.VehicleModelFilter{}})
 		log.Printf("result : %v",response)
 		// log 저장
 		if err != nil {
-			db.Create(&model.Log{APIName:"ListVehicleModel",APICallTime:time.Now(),APISuccess:"FAIL", APIResponseName:response.String()})
+			h.CoreDB.Create(&model.Log{APIName:"ListVehicleModel",APICallTime:time.Now(),APISuccess:"FAIL", APIResponseName:response.String()})
 			log.Fatalf("could not request: %v", err)
 		}else{
-			db.Create(&model.Log{APIName:"ListVehicleModel",APICallTime:time.Now(),APISuccess:"SUCCESS", APIResponseName:response.String()})
+			h.CoreDB.Create(&model.Log{APIName:"ListVehicleModel",APICallTime:time.Now(),APISuccess:"SUCCESS", APIResponseName:response.String()})
 		}
 		w.Write([]byte(response.String()))
 	}else{
@@ -137,16 +135,16 @@ func VehiclesHandler(w http.ResponseWriter, r *http.Request ) {
 
 		// log 저장
 		if err != nil {
-			db.Create(&model.Log{APIName:"ListVehicleModel",APICallTime:time.Now(),APISuccess:"FAIL", APIResponseName:response.String()})
+			h.CoreDB.Create(&model.Log{APIName:"ListVehicleModel",APICallTime:time.Now(),APISuccess:"FAIL", APIResponseName:response.String()})
 			log.Fatalf("could not request: %v", err)
 		}else{
-			db.Create(&model.Log{APIName:"ListVehicleModel",APICallTime:time.Now(),APISuccess:"SUCCESS", APIResponseName:response.String()})
+			h.CoreDB.Create(&model.Log{APIName:"ListVehicleModel",APICallTime:time.Now(),APISuccess:"SUCCESS", APIResponseName:response.String()})
 		}
 		w.Write([]byte(response.String()))
 	}
 
-	db.Commit()
+	//h.CoreDB.Commit()
 
-	db.Close()
+
 	return
 }

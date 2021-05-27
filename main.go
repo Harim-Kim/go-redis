@@ -14,7 +14,7 @@ var (
 	CoreDB *gorm.DB
 	ctx = context.Background()
 )
-func ExampleClient(){
+func ExampleClient() {
 	rdb := redis.NewClient(&redis.Options{
 		Addr: "localhost:6379",
 		Password: "",
@@ -41,26 +41,39 @@ func ExampleClient(){
 	}
 }
 func Init(){
-	//log처리를 위한 DB Connect
+	//db 연결을 위한 connection
 	db, err := gorm.Open("mysql","root:root@tcp(127.0.0.1:3306)/vehicle_model?charset=utf8&parseTime=True&loc=Local")
 	if err != nil{
 		panic("failed to open database")
 	}
 	CoreDB = db
 
-
-	CoreDB.Close()
 }
 func main(){
-	//Init()
+	Init()
 	ExampleClient()
 	r := mux.NewRouter()
-	r.HandleFunc("/",handler.LandingHandler).Methods(http.MethodGet) // Test
-	r.HandleFunc("/vehicleModel",handler.VehiclesHandler).Methods(http.MethodGet)
-	r.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusNotFound)
-	})
+	HandleRoutes(r)
+
 	http.ListenAndServe(":18080", r)
 	fmt.Println("Don't Die..")
+	CoreDB.Close()
 }
 
+func LandingHandler(w http.ResponseWriter, r *http.Request){
+	w.Write([]byte("Hello world"))
+	return
+}
+
+func HandleRoutes(router *mux.Router){
+	router.HandleFunc("/",LandingHandler).Methods(http.MethodGet)
+
+	//vehicle
+	vh := &handler.VehicleModelHandler{
+		CoreDB: CoreDB,
+	}
+	router.HandleFunc("/vehicleModel", vh.VehiclesHandler).Methods(http.MethodGet)
+	router.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusNotFound)
+	})
+}
