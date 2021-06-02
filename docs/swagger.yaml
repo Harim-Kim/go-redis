@@ -1,0 +1,297 @@
+basePath: /
+definitions:
+  model.Image:
+    properties:
+      createdAt:
+        type: string
+      createdBy:
+        type: string
+      deletedAt:
+        type: string
+      id:
+        type: string
+      image:
+        description: 1MB
+        items:
+          type: integer
+        type: array
+      updatedAt:
+        type: string
+    type: object
+  model.Vehiclemodel:
+    properties:
+      brand:
+        description: 제조사 이름
+        type: string
+      createdAt:
+        type: string
+      createdBy:
+        type: string
+      creatorName:
+        type: string
+      deletedAt:
+        type: string
+      displacement:
+        description: 배기량 cc
+        type: integer
+      fuelEfficiency:
+        description: 연비
+        type: number
+      fuelTankCapacity:
+        description: 연료탱크용량 liter
+        type: integer
+      fuelType:
+        description: '연료 유형 : 전기'
+        type: string
+      grade:
+        description: 차량 등록 경형/소형/준중형/중형/대형/SUV
+        type: string
+      id:
+        type: string
+      image:
+        $ref: '#/definitions/model.Image'
+      imageURL:
+        type: string
+      name:
+        description: 모델명
+        type: string
+      seatingCapacity:
+        description: 탑승인원
+        type: integer
+      standard:
+        description: 표준 모델 여부
+        type: boolean
+      standardModelID:
+        description: 표준 모델ID
+        type: string
+      updatedAt:
+        type: string
+      warmUpTime:
+        description: 차량 이용 예비시간
+        type: integer
+    type: object
+host: localhost:18080
+info:
+  contact:
+    email: harimkim@hyundai-autoever.com
+  description: This is Open Api Document Server(Swagger)
+  title: open API(Swagger)
+  version: 1.0.0
+paths:
+  /vehiclemodel:
+    get:
+      consumes:
+      - text/html
+      description: VehicleModelList를 조회한다
+      parameters:
+      - description: 모델명
+        in: query
+        name: name
+        type: string
+      - description: 제조사
+        in: query
+        name: brand
+        type: string
+      - description: 제조사[]
+        in: query
+        name: brands
+        type: string
+      - description: 연료 유형
+        in: query
+        name: fuelType
+        type: string
+      - description: 연료 유형[]
+        in: query
+        name: fuelTypes
+        type: string
+      - description: 차량 등급
+        in: query
+        name: grade
+        type: string
+      - description: 차량 등급[]
+        in: query
+        name: grades
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Vehiclemodel'
+      summary: Show a VehicleModelList
+    post:
+      consumes:
+      - text/html
+      description: VehicleModel을 생성한다.
+      parameters:
+      - description: 모델명
+        in: body
+        name: name
+        required: true
+        schema:
+          type: string
+      - description: 제조사
+        in: body
+        name: brand
+        required: true
+        schema:
+          type: string
+      - description: 대표 모델 여부
+        in: body
+        name: standard
+        schema:
+          type: boolean
+      - description: 대표 모델 ID
+        in: body
+        name: standardModelID
+        schema:
+          type: string
+      - description: 좌석수
+        in: body
+        name: seatingCapacity
+        schema:
+          type: integer
+      - description: 연료 유형
+        in: body
+        name: fuelType
+        schema:
+          type: string
+      - description: 연비
+        in: body
+        name: fuelEfficiency
+        schema:
+          type: number
+      - description: 주행 거리
+        in: body
+        name: displacement
+        schema:
+          type: integer
+      - description: 차량 등급
+        in: body
+        name: grade
+        required: true
+        schema:
+          type: string
+      - description: 웜업 시간
+        in: body
+        name: warmUpTime
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Vehiclemodel'
+      summary: Show a VehicleModelInsert
+  /vehiclemodel/{vehiclemodelID}:
+    delete:
+      consumes:
+      - text/html
+      description: VehicleModel을 삭제한다.
+      parameters:
+      - description: 모델 ID
+        in: path
+        name: vehicleID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Vehiclemodel'
+      summary: Show a  VehicleModelDelete
+    get:
+      consumes:
+      - text/html
+      description: VehicleModel를 조회한다
+      parameters:
+      - description: 모델 ID
+        in: path
+        name: vehicleID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Vehiclemodel'
+      summary: Show a  VehicleModelGet
+    patch:
+      consumes:
+      - text/html
+      description: VehicleModel을 수정한다.
+      parameters:
+      - description: 모델명
+        in: body
+        name: name
+        required: true
+        schema:
+          type: string
+      - description: 제조사
+        in: body
+        name: brand
+        required: true
+        schema:
+          type: string
+      - description: 대표 모델 여부
+        in: body
+        name: standard
+        schema:
+          type: boolean
+      - description: 대표 모델 ID
+        in: body
+        name: standardModelID
+        schema:
+          type: string
+      - description: 좌석수
+        in: body
+        name: seatingCapacity
+        schema:
+          type: integer
+      - description: 연료 유형
+        in: body
+        name: fuelType
+        schema:
+          type: string
+      - description: 연비
+        in: body
+        name: fuelEfficiency
+        schema:
+          type: number
+      - description: 주행 거리
+        in: body
+        name: displacement
+        schema:
+          type: integer
+      - description: 차량 등급
+        in: body
+        name: grade
+        required: true
+        schema:
+          type: string
+      - description: 웜업 시간
+        in: body
+        name: warmUpTime
+        schema:
+          type: integer
+      - description: 모델 ID
+        in: path
+        name: vehicleID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Vehiclemodel'
+      summary: Show a VehicleModelUpdate
+swagger: "2.0"

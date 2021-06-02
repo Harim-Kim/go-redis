@@ -1,23 +1,21 @@
 package handler
 
-import "github.com/jinzhu/gorm"
+import (
+	"OJT/model"
+	"github.com/go-redis/redis"
+	"github.com/jinzhu/gorm"
+	"time"
+	pb "OJT/core"
+)
 
 type BaseHandler struct {
 	CoreDB		*gorm.DB
+	VehicleModelClient    *pb.VehiclemodelServiceClient
+	RedisClient 		  *redis.Client
 }
 
-func (h BaseHandler) WriteLog(code int, err error) {
+func WriteLog(code string, APIName string, response string, db *gorm.DB) {
+	db.Create(&model.Log{APIName:APIName,APICallTime:time.Now(),APISuccess:code, APIResponseName:response})
 	return
 }
 
-func (h BaseHandler) UpdateLog(code int, err error) {
-	return
-}
-
-func (h BaseHandler) ReadLog () {
-	return
-}
-
-func (h BaseHandler) DeleteLog () {
-	return
-}
