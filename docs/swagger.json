@@ -6,10 +6,10 @@
         "contact": {
             "email": "harimkim@hyundai-autoever.com"
         },
-        "version": "1.0.0"
+        "version": "1.1.1"
     },
     "host": "localhost:18080",
-    "basePath": "/",
+    "basePath": "/vehiclemodel",
     "paths": {
         "/vehiclemodel": {
             "get": {
@@ -180,7 +180,7 @@
         },
         "/vehiclemodel/{vehiclemodelID}": {
             "get": {
-                "description": "VehicleModel를 조회한다",
+                "description": "VehicleModel을 조회한다",
                 "consumes": [
                     "text/html"
                 ],
@@ -193,8 +193,7 @@
                         "type": "string",
                         "description": "모델 ID",
                         "name": "vehicleID",
-                        "in": "path",
-                        "required": true
+                        "in": "path"
                     }
                 ],
                 "responses": {

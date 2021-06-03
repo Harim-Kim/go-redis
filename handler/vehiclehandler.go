@@ -106,12 +106,12 @@ func (h *VehicleModelHandler) VehicleModelList(w http.ResponseWriter, r *http.Re
 
 	return
 }
-//  VehicleModelGet godoc
+// VehicleModelGet godoc
 // @Summary Show a  VehicleModelGet
-// @Description VehicleModel를 조회한다
+// @Description VehicleModel을 조회한다
 // @Accept  html
 // @Produce  json
-// @Param vehicleID path string true "모델 ID"
+// @Param vehicleID path string false "모델 ID"
 // @Success 200 {object} model.Vehiclemodel
 // @Router /vehiclemodel/{vehiclemodelID} [get]
 func (h *VehicleModelHandler) VehicleModelGet(w http.ResponseWriter, r *http.Request ){
@@ -195,7 +195,9 @@ func (h *VehicleModelHandler) VehicleModelInsert(w http.ResponseWriter, r *http.
 	fmt.Println("등록 ")
 	reqData := &message.VehicleModelRequest{}
 	reqData.Brand = "Kia"
+
 	err := reqData.Validate(r)
+
 	if err != nil {
 		WriteLog("FAIL", "VehicleModelInsert", "invalid inputs",h.CoreDB)
 		return
@@ -240,6 +242,7 @@ func (h *VehicleModelHandler) VehicleModelInsert(w http.ResponseWriter, r *http.
 	}
 
 }
+
 // VehicleModelUpdate godoc
 // @Summary Show a VehicleModelUpdate
 // @Description VehicleModel을 수정한다.
@@ -319,7 +322,7 @@ func (h *VehicleModelHandler) VehicleModelUpdate(w http.ResponseWriter, r *http.
 			return
 		}
 
-		result, err = (*h.VehicleModelClient).GetVehicleModel(ctx, &pb.VehicleModelID{
+		result, err = c.GetVehicleModel(ctx, &pb.VehicleModelID{
 			ID: result.ID,
 		})
 		if err != nil {
@@ -328,11 +331,8 @@ func (h *VehicleModelHandler) VehicleModelUpdate(w http.ResponseWriter, r *http.
 		}
 		w.Write([]byte(result.String()))
 		WriteLog("SUCCESS", "VehicleModelUpdate", result.String() ,h.CoreDB)
-		//out := &message.VehicleModelDetail{}
-		//out.Convert(result)
 
 		w.WriteHeader(http.StatusOK)
-		//_ = json.NewEncoder(w).Encode(out)
 
 		//redis 반영
 		key_redis_vehicle := result.ID

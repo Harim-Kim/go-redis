@@ -195,7 +195,7 @@ var doc = `{
         },
         "/vehiclemodel/{vehiclemodelID}": {
             "get": {
-                "description": "VehicleModel를 조회한다",
+                "description": "VehicleModel을 조회한다",
                 "consumes": [
                     "text/html"
                 ],
@@ -208,8 +208,7 @@ var doc = `{
                         "type": "string",
                         "description": "모델 ID",
                         "name": "vehicleID",
-                        "in": "path",
-                        "required": true
+                        "in": "path"
                     }
                 ],
                 "responses": {
@@ -475,9 +474,9 @@ type swaggerInfo struct {
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = swaggerInfo{
-	Version:     "1.0.0",
+	Version:     "1.1.1",
 	Host:        "localhost:18080",
-	BasePath:    "/",
+	BasePath:    "/vehiclemodel",
 	Schemes:     []string{},
 	Title:       "open API(Swagger)",
 	Description: "This is Open Api Document Server(Swagger)",

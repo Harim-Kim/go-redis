@@ -1,4 +1,4 @@
-basePath: /
+basePath: /vehiclemodel
 definitions:
   model.Image:
     properties:
@@ -76,7 +76,7 @@ info:
     email: harimkim@hyundai-autoever.com
   description: This is Open Api Document Server(Swagger)
   title: open API(Swagger)
-  version: 1.0.0
+  version: 1.1.1
 paths:
   /vehiclemodel:
     get:
@@ -208,12 +208,11 @@ paths:
     get:
       consumes:
       - text/html
-      description: VehicleModel를 조회한다
+      description: VehicleModel을 조회한다
       parameters:
       - description: 모델 ID
         in: path
         name: vehicleID
-        required: true
         type: string
       produces:
       - application/json

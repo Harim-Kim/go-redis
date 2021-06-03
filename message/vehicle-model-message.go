@@ -37,17 +37,30 @@ type VehicleModelDetail struct {
 	ImageURL         string  `json:"imageURL"`
 }
 type VehicleModelRequest struct {
-	Name             string  `json:"name"`
-	Brand            string  `json:"brand"`
+	Name             string  `json:"name,string"`
+	Brand            string  `json:"brand,string"`
 	Standard         bool    `json:"standard,string"`
-	StandardModelID  string  `json:"standardModelID"`
+	StandardModelID  string  `json:"standardModelID,string"`
 	SeatingCapacity  uint32  `json:"seatingCapacity,string"`
-	FuelType         string  `json:"fuelType"`
+	FuelType         string  `json:"fuelType",string`
 	FuelEfficiency   float32 `json:"fuelEfficiency,string"`
 	FuelTankCapacity uint32  `json:"fuelTankCapacity,string"`
 	Displacement     uint32  `json:"displacement,string"`
-	Grade            string  `json:"grade"`
+	Grade            string  `json:"grade,string"`
 	WarmUpTime       uint32  `json:"warmUpTime,string"`
+}
+type VehicleModelRequestWrapper struct {
+	Name             string  `json:"name"`
+	Brand            string  `json:"brand"`
+	Standard         int    `json:"standard"`
+	StandardModelID  string  `json:"standardModelID"`
+	SeatingCapacity  uint32  `json:"seatingCapacity"`
+	FuelType         string  `json:"fuelType",string`
+	FuelEfficiency   float32 `json:"fuelEfficiency"`
+	FuelTankCapacity uint32  `json:"fuelTankCapacity"`
+	Displacement     uint32  `json:"displacement"`
+	Grade            string  `json:"grade"`
+	WarmUpTime       uint32  `json:"warmUpTime"`
 }
 
 func  Decoder(r *http.Request) pb.VehicleModelFilter{
@@ -72,31 +85,55 @@ func  Decoder(r *http.Request) pb.VehicleModelFilter{
 	return filter
 }
 func (data *VehicleModelRequest) Validate(r *http.Request) error {
-	err := json.NewDecoder(r.Body).Decode(data)
+	fmt.Println("validation process")
+	wrapper := &VehicleModelRequestWrapper{}
+	err := json.NewDecoder(r.Body).Decode(wrapper)
 	if err != nil {
+		fmt.Println("decode error",err)
 		return err
 	}
-
+	data.Name = wrapper.Name
+	data.Brand = wrapper.Brand
+	if wrapper.Standard == 0{
+		data.Standard = false
+	} else {
+		data.Standard = true
+	}
+	data.StandardModelID = wrapper.StandardModelID
+	data.SeatingCapacity = wrapper.SeatingCapacity
+	data.FuelType = wrapper.FuelType
+	data.FuelEfficiency = wrapper.FuelEfficiency
+	data.FuelTankCapacity = wrapper.FuelTankCapacity
+	data.Displacement = wrapper.Displacement
+	data.Grade = wrapper.Grade
+	data.WarmUpTime = wrapper.WarmUpTime
 	if data.Name == "" {
+		fmt.Println("no name")
 		return errors.New("EMPTY_NAME")
 	}
 	if data.Brand == "" {
+		fmt.Println("no brand")
 		return errors.New("EMPTY_BRAND")
 	}
 	if data.Grade == "" {
+		fmt.Println("no grade")
 		return errors.New("EMPTY_GRADE")
 	} else if value, ok := pb.VehicleModelGrade_value[data.Grade]; !ok || value <= 0 {
+		fmt.Println("no grade")
 		return errors.New("INVALID_GRADE")
 	}
 	if data.WarmUpTime <= 0 {
+		fmt.Println("no warm")
 		return errors.New("INVALID_WARM_UP_TIME")
 	}
 
 	if !data.Standard {
 		if data.StandardModelID == "" {
+			fmt.Println("no EMPTY_STANDARD_MODEL_ID")
 			return errors.New("EMPTY_STANDARD_MODEL_ID")
 		}
 		if data.FuelType == "" {
+			fmt.Println("EMPTY_FUEL_TYPE")
 			return errors.New("EMPTY_FUEL_TYPE")
 		}
 	}

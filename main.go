@@ -8,11 +8,11 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
+	httpSwagger "github.com/swaggo/http-swagger"
+	_ "github.com/swaggo/http-swagger/example/go-chi/docs"
 	"google.golang.org/grpc"
 	"log"
 	"net/http"
-	"github.com/swaggo/http-swagger"
-	_ "github.com/swaggo/http-swagger/example/go-chi/docs"
 )
 var (
 	CoreDB 				  *gorm.DB
@@ -47,23 +47,21 @@ func init(){
 	CoreDB = db
 
 }
-//@title open API(Swagger)
-//@version 1.0.0
-//@description This is Open Api Document Server(Swagger)
-//@contact.email harimkim@hyundai-autoever.com
-//@host localhost:18080
-//@BasePath /
+
+// @title open API(Swagger)
+// @version 1.1.1
+// @description This is Open Api Document Server(Swagger)
+// @contact.email harimkim@hyundai-autoever.com
+// @host localhost:18080
+// @BasePath /vehiclemodel
 func main(){
-
 	RedisInit()
-
 	r := mux.NewRouter()
 	HandleRoutes(r)
 	makeConnection()
 	// Swagger
 	r.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler)
 	http.ListenAndServe(":18080", r)
-	
 	CoreDB.Close()
 }
 func makeConnection(){
@@ -77,12 +75,9 @@ func makeConnection(){
 	// grpc gateway와 grpc 서버 이어 주기 위한 context 선언
 	//ctx, cancel := context.WithTimeout(context.Background(),time.Second)
 	//defer cancel()
-
 	VehicleModelClient = &c
 }
 func HandleRoutes(router *mux.Router){
-	router.HandleFunc("/",LandingHandler).Methods(http.MethodGet)
-
 	//vehicle
 	vh := &handler.VehicleModelHandler{
 		CoreDB: CoreDB,
@@ -99,10 +94,4 @@ func HandleRoutes(router *mux.Router){
 	router.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
 	})
-}
-func LandingHandler(w http.ResponseWriter, r *http.Request){
-
-
-	w.Write([]byte("Hello world"))
-	return
 }
