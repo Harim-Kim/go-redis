@@ -9,7 +9,7 @@
         "version": "1.1.1"
     },
     "host": "localhost:18080",
-    "basePath": "/vehiclemodel",
+    "basePath": "/",
     "paths": {
         "/vehiclemodel": {
             "get": {

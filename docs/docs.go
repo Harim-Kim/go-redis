@@ -476,7 +476,7 @@ type swaggerInfo struct {
 var SwaggerInfo = swaggerInfo{
 	Version:     "1.1.1",
 	Host:        "localhost:18080",
-	BasePath:    "/vehiclemodel",
+	BasePath:    "/",
 	Schemes:     []string{},
 	Title:       "open API(Swagger)",
 	Description: "This is Open Api Document Server(Swagger)",

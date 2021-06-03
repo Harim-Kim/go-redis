@@ -1,4 +1,4 @@
-basePath: /vehiclemodel
+basePath: /
 definitions:
   model.Image:
     properties:

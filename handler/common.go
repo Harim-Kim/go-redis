@@ -9,7 +9,7 @@ import (
 )
 
 type BaseHandler struct {
-	CoreDB		*gorm.DB
+	CoreDB				  *gorm.DB
 	VehicleModelClient    *pb.VehiclemodelServiceClient
 	RedisClient 		  *redis.Client
 }

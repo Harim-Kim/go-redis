@@ -74,9 +74,7 @@ func (h *VehicleModelHandler) VehicleModelList(w http.ResponseWriter, r *http.Re
 		}
 
 	}else{
-
 		filter2 := message.Decoder(r)
-
 		//reqData2Core := &pb.ListVehicleModelRequest{Filter: &filter2}
 		//이렇게 connection 정보 넘기는 경우 error 발생.
 		//result, err := (*h.VehicleModelClient).ListVehicleModel(ctx, reqData2Core)

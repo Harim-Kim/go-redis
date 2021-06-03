@@ -53,7 +53,7 @@ func init(){
 // @description This is Open Api Document Server(Swagger)
 // @contact.email harimkim@hyundai-autoever.com
 // @host localhost:18080
-// @BasePath /vehiclemodel
+// @BasePath /
 func main(){
 	RedisInit()
 	r := mux.NewRouter()
