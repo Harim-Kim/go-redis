@@ -52,7 +52,7 @@ type VehicleModelRequest struct {
 type VehicleModelRequestWrapper struct {
 	Name             string  `json:"name"`
 	Brand            string  `json:"brand"`
-	Standard         int    `json:"standard"`
+	Standard         int     `json:"standard"`
 	StandardModelID  string  `json:"standardModelID"`
 	SeatingCapacity  uint32  `json:"seatingCapacity"`
 	FuelType         string  `json:"fuelType",string`
@@ -140,35 +140,3 @@ func (data *VehicleModelRequest) Validate(r *http.Request) error {
 
 	return nil
 }
-//func validateRequest(r *http.Request) error{
-//	err := json.NewDecoder(r.Body).Decode(data)
-//	if err != nil {
-//		return err
-//	}
-//
-//	if data.Name == "" {
-//		return errors.New("EMPTY_NAME")
-//	}
-//	if data.Brand == "" {
-//		return errors.New("EMPTY_BRAND")
-//	}
-//	if data.Grade == "" {
-//		return errors.New("EMPTY_GRADE")
-//	} else if value, ok := core.VehicleModelGrade_value[data.Grade]; !ok || value <= 0 {
-//		return errors.New("INVALID_GRADE")
-//	}
-//	if data.WarmUpTime <= 0 {
-//		return errors.New("INVALID_WARM_UP_TIME")
-//	}
-//
-//	if !data.Standard {
-//		if data.StandardModelID == "" {
-//			return errors.New("EMPTY_STANDARD_MODEL_ID")
-//		}
-//		if data.FuelType == "" {
-//			return errors.New("EMPTY_FUEL_TYPE")
-//		}
-//	}
-//
-//	return nil
-//}

@@ -3,13 +3,10 @@ package main
 import (
 	pb "OJT/core"
 	"OJT/handler"
-	"context"
-	"github.com/go-redis/redis/v8"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
 	httpSwagger "github.com/swaggo/http-swagger"
-	_ "github.com/swaggo/http-swagger/example/go-chi/docs"
 	"google.golang.org/grpc"
 	"log"
 	"net/http"
@@ -17,27 +14,9 @@ import (
 var (
 	CoreDB 				  *gorm.DB
 	VehicleModelClient    *pb.VehiclemodelServiceClient
-	client 			= 	  &redisClient{}
+	//client 			= 	  &redisClient{}
 )
-type redisClient struct{
-	c *redis.Client
-}
-func RedisInit() (*redis.Client)  {
-	redisClient := redis.NewClient(&redis.Options{
-		Addr: "localhost:6379",
-		Password: "",
-		DB: 0,
-	})
 
-	_, err := redisClient.Ping(context.Background()).Result()
-	if err != nil{
-		log.Println("redis client error")
-		return redisClient
-	}
-	client.c = redisClient
-	return redisClient
-
-}
 func init(){
 	//db 연결을 위한 connection
 	db, err := gorm.Open("mysql","root:root@tcp(127.0.0.1:3306)/vehicle_model?charset=utf8&parseTime=True&loc=Local")
@@ -48,14 +27,13 @@ func init(){
 
 }
 
-// @title open API(Swagger)
+// @title Hellow
 // @version 1.1.1
-// @description This is Open Api Document Server(Swagger)
+// @description This is vehicle Api Document Server(Swagger)
 // @contact.email harimkim@hyundai-autoever.com
 // @host localhost:18080
 // @BasePath /
 func main(){
-	RedisInit()
 	r := mux.NewRouter()
 	HandleRoutes(r)
 	makeConnection()
@@ -69,7 +47,7 @@ func makeConnection(){
 	if err != nil {
 		log.Fatalf("did not connect core: %v",err)
 	}
-	defer conn.Close()
+
 
 	c := pb.NewVehiclemodelServiceClient(conn)
 	// grpc gateway와 grpc 서버 이어 주기 위한 context 선언

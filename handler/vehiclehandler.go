@@ -22,11 +22,12 @@ import (
 
 type VehicleModelHandler BaseHandler
 
+
 // VehicleModelList godoc
 // @Summary Show a VehicleModelList
 // @Description VehicleModelList를 조회한다
-// @Accept  html
-// @Produce  json
+// @Accept html
+// @Produce json
 // @Param name query string false "모델명"
 // @Param brand query string false "제조사"
 // @Param brands query string false "제조사[]"
@@ -104,14 +105,8 @@ func (h *VehicleModelHandler) VehicleModelList(w http.ResponseWriter, r *http.Re
 
 	return
 }
-// VehicleModelGet godoc
-// @Summary Show a  VehicleModelGet
-// @Description VehicleModel을 조회한다
-// @Accept  html
-// @Produce  json
-// @Param vehicleID path string false "모델 ID"
-// @Success 200 {object} model.Vehiclemodel
-// @Router /vehiclemodel/{vehiclemodelID} [get]
+
+
 func (h *VehicleModelHandler) VehicleModelGet(w http.ResponseWriter, r *http.Request ){
 	fmt.Println("모델 조회")
 	var vehicle_id uuid.UUID
@@ -172,23 +167,7 @@ func (h *VehicleModelHandler) VehicleModelGet(w http.ResponseWriter, r *http.Req
 	w.Write([]byte(string(vehicle_from_redis)))
 	return
 }
-// VehicleModelInsert godoc
-// @Summary Show a VehicleModelInsert
-// @Description VehicleModel을 생성한다.
-// @Accept  html
-// @Produce  json
-// @Param name body string true "모델명"
-// @Param brand body string true "제조사"
-// @Param standard body bool false "대표 모델 여부"
-// @Param standardModelID body string false "대표 모델 ID"
-// @Param seatingCapacity body uint32 false "좌석수"
-// @Param fuelType body string false "연료 유형"
-// @Param fuelEfficiency body float32 false "연비"
-// @Param displacement body uint32 false "주행 거리"
-// @Param grade body string true "차량 등급"
-// @Param warmUpTime body uint32 false "웜업 시간"
-// @Success 200 {object} model.Vehiclemodel
-// @Router /vehiclemodel [post]
+
 func (h *VehicleModelHandler) VehicleModelInsert(w http.ResponseWriter, r *http.Request ) {
 	fmt.Println("등록 ")
 	reqData := &message.VehicleModelRequest{}
@@ -224,6 +203,7 @@ func (h *VehicleModelHandler) VehicleModelInsert(w http.ResponseWriter, r *http.
 		})
 		if err != nil {
 			WriteLog("FAIL", "VehicleModelInsert", "Core DB Error",h.CoreDB)
+			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
@@ -241,24 +221,7 @@ func (h *VehicleModelHandler) VehicleModelInsert(w http.ResponseWriter, r *http.
 
 }
 
-// VehicleModelUpdate godoc
-// @Summary Show a VehicleModelUpdate
-// @Description VehicleModel을 수정한다.
-// @Accept  html
-// @Produce  json
-// @Param name body string true "모델명"
-// @Param brand body string true "제조사"
-// @Param standard body bool false "대표 모델 여부"
-// @Param standardModelID body string false "대표 모델 ID"
-// @Param seatingCapacity body uint32 false "좌석수"
-// @Param fuelType body string false "연료 유형"
-// @Param fuelEfficiency body float32 false "연비"
-// @Param displacement body uint32 false "주행 거리"
-// @Param grade body string true "차량 등급"
-// @Param warmUpTime body uint32 false "웜업 시간"
-// @Param vehicleID path string true "모델 ID"
-// @Success 200 {object} model.Vehiclemodel
-// @Router /vehiclemodel/{vehiclemodelID} [patch]
+
 func (h *VehicleModelHandler) VehicleModelUpdate(w http.ResponseWriter, r *http.Request ) {
 	fmt.Println("수정")
 	conn, err := grpc.Dial("localhost:12005", grpc.WithInsecure(),grpc.WithBlock())
@@ -341,14 +304,7 @@ func (h *VehicleModelHandler) VehicleModelUpdate(w http.ResponseWriter, r *http.
 	}
 	return
 }
-// VehicleModelDelete godoc
-// @Summary Show a  VehicleModelDelete
-// @Description VehicleModel을 삭제한다.
-// @Accept  html
-// @Produce  json
-// @Param vehicleID path string true "모델 ID"
-// @Success 200 {object} model.Vehiclemodel
-// @Router /vehiclemodel/{vehiclemodelID} [delete]
+
 func (h *VehicleModelHandler) VehicleModelDelete(w http.ResponseWriter, r *http.Request ) {
 	fmt.Println("삭제")
 	conn, err := grpc.Dial("localhost:12005", grpc.WithInsecure(),grpc.WithBlock())
@@ -373,20 +329,6 @@ func (h *VehicleModelHandler) VehicleModelDelete(w http.ResponseWriter, r *http.
 	}
 
 	ctx := r.Context()
-	//count, err := (*h.VehicleClient).CountVehicle(ctx, &core.CountVehicleRequest{
-	//	Filter: &pb.VehicleFilter{
-	//		ModelID: vehiclemodelID.String(),
-	//	},
-	//})
-	//if err != nil {
-	//	replyError(w, h.Logger, utils.ConvertGRPCError(err), err)
-	//	return
-	//}
-	//if count.Count > 0 {
-	//	replyError(w, h.Logger, http.StatusConflict, errors.New("CANNOT_DELETE_VEHICLEMODEL_DUE_TO_ASSOCIATED_VEHICLES"))
-	//	return
-	//}
-
 	result, err := c.DeleteVehicleModel(ctx, &pb.VehicleModelID{
 		ID: vehiclemodelID.String(),
 	})
@@ -402,6 +344,8 @@ func (h *VehicleModelHandler) VehicleModelDelete(w http.ResponseWriter, r *http.
 	//redis delete
 	h.VehicleModelRedisDelete(vehiclemodelID.String())
 }
+
+
 func (h *VehicleModelHandler) VehicleModelCSV (w http.ResponseWriter, r *http.Request ) {
 	fmt.Println("csv..")
 	conn, err := grpc.Dial("localhost:12005", grpc.WithInsecure(),grpc.WithBlock())
@@ -439,7 +383,7 @@ func (h *VehicleModelHandler) VehicleModelCSV (w http.ResponseWriter, r *http.Re
 
 	}
 	wr.Flush()
-
+	file.Close()
 	return
 }
 func (r *VehicleModelHandler) VehicleModelRedisGet( key string, src interface{}) error {
@@ -466,7 +410,7 @@ func (r *VehicleModelHandler) VehicleModelRedisSet( key string, value interface{
 	}
 	return nil
 }
-func (r *VehicleModelHandler) VehicleModelRedisDelete(key string, )  {
+func (r *VehicleModelHandler) VehicleModelRedisDelete(key string)  {
 
 	r.RedisClient.Del(key)
 
